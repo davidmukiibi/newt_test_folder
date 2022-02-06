@@ -1,0 +1,50 @@
+name: Deploy new mongo DB atlas database
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build-database:
+    name: build the mongo db with terraform
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Terraform Init for master env
+        run: |
+          cd ./databases/$GITHUB_REF_NAME
+          terraform init
+
+      - name: Terraform Plan for master env
+        if: github.ref == 'refs/heads/master'
+        env:
+          TF_VAR_project_id: ${{ secrets.MASTER_MONGO_ATLAS_PROJECT_ID }}
+          TF_VAR_MONGODB_ATLAS_PUBLIC_KEY: ${{ secrets.MASTER_MONGO_ATLAS_PUBLIC_KEY }}
+          TF_VAR_MONGODB_ATLAS_PRIVATE_KEY: ${{ secrets.MASTER_MONGO_ATLAS_PRIVATE_KEY }}
+        run: |
+          cd ./databases/$GITHUB_REF_NAME
+          terraform plan
+
+      - name: Terraform Apply for master env
+        if: github.ref == 'refs/heads/staging'
+        env:
+          TF_VAR_project_id: ${{ secrets.MASTER_MONGO_ATLAS_PROJECT_ID }}
+          TF_VAR_MONGODB_ATLAS_PUBLIC_KEY: ${{ secrets.MASTER_MONGO_ATLAS_PUBLIC_KEY }}
+          TF_VAR_MONGODB_ATLAS_PRIVATE_KEY: ${{ secrets.MASTER_MONGO_ATLAS_PRIVATE_KEY }}
+        run: |
+          cd ./databases/$GITHUB_REF_NAME
+          terraform apply -auto-approve
+
+      # - name: Python script to write vault file for master env
+      #   if: github.ref == 'refs/heads/master'
+      #   env:
+      #     atlas_public_key: ${{ secrets.MASTER_MONGO_ATLAS_PUBLIC_KEY }}
+      #     atlas_private_key: ${{ secrets.MASTER_MONGO_ATLAS_PRIVATE_KEY }}
+      #     TF_VAR_project_id: ${{ secrets.MASTER_MONGO_ATLAS_PROJECT_ID }}
+      #   run: |-
+      #     cd ./databases/$GITHUB_REF_NAME
+      #     chmod +x helper.py
+      #     python run helper.py
