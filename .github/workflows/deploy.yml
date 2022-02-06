@@ -21,9 +21,9 @@ jobs:
       - name: Terraform Plan for master env
         if: github.ref == 'refs/heads/master'
         env:
-          TF_VAR_project_id: ${{ secrets.MASTER_MONGO_ATLAS_PROJECT_ID }}
-          TF_VAR_MONGODB_ATLAS_PUBLIC_KEY: ${{ secrets.MASTER_MONGO_ATLAS_PUBLIC_KEY }}
-          TF_VAR_MONGODB_ATLAS_PRIVATE_KEY: ${{ secrets.MASTER_MONGO_ATLAS_PRIVATE_KEY }}
+          TF_VAR_project_id: ${{ secrets.MONGODB_ATLAS_PROJECT_ID }}
+          TF_VAR_MONGODB_ATLAS_PUBLIC_KEY: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
+          TF_VAR_MONGODB_ATLAS_PRIVATE_KEY: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
         run: |
           cd ./databases/$GITHUB_REF_NAME
           terraform plan

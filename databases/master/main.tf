@@ -3,4 +3,4 @@ module "test-cluster" {
   project_id = var.project_id
 }
 
-// variable "project_id" {}
+variable "project_id" {}
