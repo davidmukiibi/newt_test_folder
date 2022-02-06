@@ -4,7 +4,7 @@
 // }
 
 resource "mongodbatlas_cluster" "cluster-test" {
-  // project_id   = var.project_id
+  project_id   = var.project_id
   name         = "cluster-test"
   cluster_type = "REPLICASET"
   replication_specs {
